@@ -20,8 +20,8 @@ var QueryBuilder = $.fn.queryBuilder;
 QueryBuilder.regional['en'] = {
   "__locale": "English (en)",
   "__author": "Damien \"Mistic\" Sorel, http://www.strangeplanet.fr",
-  "add_rule": "Add rule",
-  "add_group": "Add group",
+  "add_rule": "Add condition",
+  "add_group": "Add condition group",
   "delete_rule": "Delete",
   "delete_group": "Delete",
   "conditions": {
@@ -52,7 +52,7 @@ QueryBuilder.regional['en'] = {
   },
   "errors": {
     "no_filter": "No filter selected",
-    "empty_group": "The group is empty",
+    "empty_group": "The condition group is empty",
     "radio_empty": "No value selected",
     "checkbox_empty": "No value selected",
     "select_empty": "No value selected",

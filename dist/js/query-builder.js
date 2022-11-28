@@ -5134,44 +5134,96 @@ QueryBuilder.define('select2', function(options) {
 
     var Selectors = QueryBuilder.selectors;
 
-    var applySelect2Options = function(rule) {
+    var applySelect2Options = function(rule, builder) {
+        if (rule.filter.input === undefined || rule.filter.input !== 'select') {
+            return;
+        }
         var rule_options = Object.assign({}, options);
         if (rule && rule.filter && rule.filter.data && rule.filter.data.select2) {
             rule_options = Object.assign(rule.filter.data.select2, rule_options);
         }
-        if (rule && rule.data && rule.data.valueLabel) {
-            rule_options.data = [
-                {
-                    id: rule.data.valueId,
-                    text: rule.data.valueLabel
-                }
-            ];
+
+        if (options && options.dropdownParentSelector) {
+            rule_options.dropdownParent = rule.$el.find(Selectors.rule_value).parents(options.dropdownParentSelector).first();
         }
-        rule.$el.find(Selectors.rule_value).removeClass('form-control').select2(rule_options)
+
+        if (rule && rule.data && rule.data.valueLabel) {
+            var option = $('<option></option>').val(rule.data.valueId).text(rule.data.valueLabel);
+            rule.$el.find(Selectors.rule_value).append(option);
+            rule.data.valueLabel = undefined;
+            rule.data.valueId = undefined;
+        }
+
+        rule.$el.find(Selectors.rule_value).removeClass('form-control').select2(rule_options);
+        rule.$el.on('select2:close', function(e) {
+            var evt = "scroll.select2"
+            $(e.target).parents().off(evt)
+            $(window).off(evt)
+        });
     };
 
     // init selectpicker
     this.on('afterCreateRuleFilters', function(e, rule) {
-        rule.$el.find(Selectors.rule_filter).removeClass('form-control').select2(options);
+        console.log(e.builder.$el.parents());
+        setTimeout(function() {
+            if (options.dropdownParentSelector) {
+                options.dropdownParent = e.builder.$el.parents(options.dropdownParentSelector).first();
+            }
+            rule.$el.find(Selectors.rule_filter).removeClass('form-control').select2(options);
+            /*rule.$el.on('select2:close', function(e) {
+                var evt = "scroll.select2"
+                $(e.target).parents().off(evt)
+                $(window).off(evt)
+            });*/
+        }, 1);
+
     });
     this.on('afterCreateRuleOperators', function(e, rule) {
-        rule.$el.find(Selectors.rule_operator).removeClass('form-control').select2(options);
+        setTimeout(function() {
+            if (options.dropdownParentSelector) {
+                options.dropdownParent = e.builder.$el.parents(options.dropdownParentSelector).first();
+            }
+            rule.$el.find(Selectors.rule_operator).removeClass('form-control').select2(options);
+            /*rule.$el.on('select2:close', function (e) {
+                var evt = "scroll.select2"
+                $(e.target).parents().off(evt)
+                $(window).off(evt)
+            });*/
+        }, 1);
     });
     this.on('afterCreateRuleInput', function(e, rule) {
-        applySelect2Options(rule);
+        applySelect2Options(rule, e.builder);
     });
 
     // update selectpicker on change
     this.on('afterUpdateRuleFilter', function(e, rule) {
-        rule.$el.find(Selectors.rule_filter).select2(options);
+        setTimeout(function() {
+            if (options.dropdownParentSelector) {
+                options.dropdownParent = e.builder.$el.parents(options.dropdownParentSelector).first();
+            }
+            rule.$el.find(Selectors.rule_filter).select2(options);
+            /*rule.$el.on('select2:close', function (e) {
+                var evt = "scroll.select2"
+                $(e.target).parents().off(evt)
+                $(window).off(evt)
+            });*/
+        }, 1);
     });
 
     this.on('afterUpdateRuleOperator', function(e, rule) {
+        if (options.dropdownParentSelector) {
+            options.dropdownParent = e.builder.$el.parents(options.dropdownParentSelector).first();
+        }
         rule.$el.find(Selectors.rule_operator).select2(options);
+        /*rule.$el.on('select2:close', function(e) {
+            var evt = "scroll.select2"
+            $(e.target).parents().off(evt)
+            $(window).off(evt)
+        });*/
     });
 
     this.on('afterUpdateRuleInput', function(e, rule) {
-        applySelect2Options(rule);
+        applySelect2Options(rule, e.builder);
     });
 
 }, {});
@@ -6220,8 +6272,8 @@ QueryBuilder.extend(/** @lends module:plugins.UniqueFilter.prototype */ {
 QueryBuilder.regional['en'] = {
   "__locale": "English (en)",
   "__author": "Damien \"Mistic\" Sorel, http://www.strangeplanet.fr",
-  "add_rule": "Add rule",
-  "add_group": "Add group",
+  "add_rule": "Add condition",
+  "add_group": "Add condition group",
   "delete_rule": "Delete",
   "delete_group": "Delete",
   "conditions": {
@@ -6252,7 +6304,7 @@ QueryBuilder.regional['en'] = {
   },
   "errors": {
     "no_filter": "No filter selected",
-    "empty_group": "The group is empty",
+    "empty_group": "The condition group is empty",
     "radio_empty": "No value selected",
     "checkbox_empty": "No value selected",
     "select_empty": "No value selected",
