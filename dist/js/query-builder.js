@@ -5144,7 +5144,7 @@ QueryBuilder.define('select2', function(options) {
         }
 
         if (options && options.dropdownParentSelector) {
-            rule_options.dropdownParent = rule.$el.find(Selectors.rule_value).parents(options.dropdownParentSelector).first();
+            options.dropdownParent = rule.$el;
         }
 
         if (rule && rule.data && rule.data.valueLabel) {
@@ -5164,31 +5164,20 @@ QueryBuilder.define('select2', function(options) {
 
     // init selectpicker
     this.on('afterCreateRuleFilters', function(e, rule) {
-        console.log(e.builder.$el.parents());
         setTimeout(function() {
             if (options.dropdownParentSelector) {
-                options.dropdownParent = e.builder.$el.parents(options.dropdownParentSelector).first();
+                options.dropdownParent = rule.$el;
             }
             rule.$el.find(Selectors.rule_filter).removeClass('form-control').select2(options);
-            /*rule.$el.on('select2:close', function(e) {
-                var evt = "scroll.select2"
-                $(e.target).parents().off(evt)
-                $(window).off(evt)
-            });*/
         }, 1);
 
     });
     this.on('afterCreateRuleOperators', function(e, rule) {
         setTimeout(function() {
             if (options.dropdownParentSelector) {
-                options.dropdownParent = e.builder.$el.parents(options.dropdownParentSelector).first();
+                options.dropdownParent = rule.$el;
             }
             rule.$el.find(Selectors.rule_operator).removeClass('form-control').select2(options);
-            /*rule.$el.on('select2:close', function (e) {
-                var evt = "scroll.select2"
-                $(e.target).parents().off(evt)
-                $(window).off(evt)
-            });*/
         }, 1);
     });
     this.on('afterCreateRuleInput', function(e, rule) {
@@ -5199,27 +5188,17 @@ QueryBuilder.define('select2', function(options) {
     this.on('afterUpdateRuleFilter', function(e, rule) {
         setTimeout(function() {
             if (options.dropdownParentSelector) {
-                options.dropdownParent = e.builder.$el.parents(options.dropdownParentSelector).first();
+                options.dropdownParent = rule.$el;
             }
             rule.$el.find(Selectors.rule_filter).select2(options);
-            /*rule.$el.on('select2:close', function (e) {
-                var evt = "scroll.select2"
-                $(e.target).parents().off(evt)
-                $(window).off(evt)
-            });*/
         }, 1);
     });
 
     this.on('afterUpdateRuleOperator', function(e, rule) {
         if (options.dropdownParentSelector) {
-            options.dropdownParent = e.builder.$el.parents(options.dropdownParentSelector).first();
+            options.dropdownParent = rule.$el;
         }
         rule.$el.find(Selectors.rule_operator).select2(options);
-        /*rule.$el.on('select2:close', function(e) {
-            var evt = "scroll.select2"
-            $(e.target).parents().off(evt)
-            $(window).off(evt)
-        });*/
     });
 
     this.on('afterUpdateRuleInput', function(e, rule) {
